@@ -2,7 +2,6 @@ const gameboard = (() => {
   j = 0
   gameboardArray = new Array(9)
   
-
   //selects gameboardholder div in html
   const gameboardHolder = () => {
     return document.getElementById('gameboardHolder')
@@ -12,7 +11,6 @@ const gameboard = (() => {
   const numberOfSquares = () => {
     return document.querySelectorAll('.square').length
   }
-
 
   //creates square
   const createSquare = () => {
@@ -41,7 +39,7 @@ const gameboard = (() => {
       j++
       return gameboardHolder().appendChild(gameboardSquare)}
     else {
-      gameboardSquare.style.backgroundColor = 'green'
+      gameboardSquare.style.backgroundColor = '#c56ceb'
       gameboardSquare.style.border = 'solid'
       gameboardSquare.style.borderWidth = '2px'
       gameboardSquare.style.borderColor = 'black'
@@ -65,7 +63,8 @@ const gameboard = (() => {
       return
     }
 
-  const changeArray = () => {
+  //updates the board as the player clicks
+  const updateBoard = () => {
     while (numberOfSquares() != 0) {
       const square = document.querySelector('.square')
       gameboardHolder().removeChild(square)
@@ -73,7 +72,7 @@ const gameboard = (() => {
     }
     return
   }
-
+  //clears the board
   const clearBoard = () => {
     while (numberOfSquares() != 0) {
       const square = document.querySelector('.square')
@@ -84,15 +83,18 @@ const gameboard = (() => {
     return
   }
 
+  //creates initial board
   createBoard()
 
   return {
-    createBoard, gameboardArray, changeArray, clearBoard
+    createBoard,
+    gameboardArray,
+    updateBoard,
+    clearBoard
   }
 })()
 
-
-
+//keeps track of players move numbers
 const player = (moveNumber) => {
   const move = () => moveNumber
 
@@ -100,27 +102,6 @@ return {
   move
   }
 }
-
-const winOrTie = (() => {
-  const rowOne = gameboardArray[0] + gameboardArray[1] + gameboardArray[2]
-  const winner = () => {
-  if (rowOne == ['x','x','x']) {
-    console.log('player one is winner')
-    gameboard.clearBoard()
-    gameboard.createBoard()
-  }
-  if (gameboardArray[0] == 'o' && gameboardArray[1] == 'o' && gameboardArray[2] == 'o') {
-    console.log('player two is winner')
-    gameboard.clearBoard()
-    gameboard.createBoard()
-  }
-  else return
-  }
-  return {
-    winner, rowOne
-  }
-})()
-
 
 const gameFlow = (() => {
   //initilizing variable
@@ -139,26 +120,45 @@ const gameFlow = (() => {
     }
   }
 
+  //listens for click on the board
   document.addEventListener('click',getSquareID)
 
-
-
+  //determines who's turn it is
   const turn = () => {
     if (gameboardArray[squareID] == null) {
       if (playerOne.move() == playerTwo.move()) {
-        gameboard.changeArray()
+        gameboard.updateBoard()
         gameboardArray[squareID] = 'x'
         gameboard.createBoard()
         playerOne = player(playerOne.move() + 1)
-        winOrTie.winner()
-        rows
+        const {rows, columns, diagonals} = updateArrays()
+        checkTie()
+        if (checkTie() == false) {
+          checkWin()
+        }
+        else if (checkTie() == true) {
+          console.log('tie')
+          gameboard.clearBoard()
+          gameboard.createBoard()
+        }
+        return
       }
       else {
-        gameboard.changeArray()
+        gameboard.updateBoard()
         gameboardArray[squareID] = 'o'
         gameboard.createBoard()
         playerTwo = player(playerTwo.move() + 1)
-        winOrTie.winner()
+        const {rows, columns, diagonals} = updateArrays()
+        checkTie()
+        if (checkTie() == false) {
+          checkWin()
+        }
+        else if (checkTie() == true) {
+          console.log('tie')
+          gameboard.clearBoard()
+          gameboard.createBoard()
+        }
+        return
       }
   }
   else {
@@ -169,11 +169,70 @@ const gameFlow = (() => {
   return
 })()
 
-const rows = (() => {
-  let rowOne = gameboardArray[0] + gameboardArray[1] + gameboardArray[2]
-  return rowOne
+const updateArrays = (() => {
+
+  //updates rows, columns, and diagonals as the player plays
+  rows = [
+    [gameboardArray[0], gameboardArray[1], gameboardArray[2]],
+    [gameboardArray[3], gameboardArray[4], gameboardArray[5]],
+    [gameboardArray[6], gameboardArray[7], gameboardArray[8]]
+  ]
+
+  columns = [
+    [gameboardArray[0], gameboardArray[3], gameboardArray[6]],
+    [gameboardArray[1], gameboardArray[4], gameboardArray[7]],
+    [gameboardArray[2], gameboardArray[5], gameboardArray[8]]
+  ]
+
+  diagonals = [
+    [gameboardArray[0], gameboardArray[4], gameboardArray[8]],
+    [gameboardArray[2], gameboardArray[4], gameboardArray[6]]
+  ]
+  return {
+    rows,
+    columns,
+    diagonals
+  }
 })
 
+//checks for wins or tie
+const checkWin = (() => {
+  //checks if player one won
+  for (i = 0; i < 3; i++) {
+    if (rows[i] == 'x,x,x' || columns[i] == 'x,x,x' || diagonals[i] == 'x,x,x') {
+      console.log('p1 is winner')
+      gameboard.clearBoard()
+      gameboard.createBoard()
+      return
+    }
+  }
+  //checks if player two won
+  for (i = 0; i < 3; i++) {
+    if (rows[i] == 'o,o,o' || columns[i] == 'o,o,o' || diagonals[i] == 'o,o,o') {
+      console.log('p2 is winner')
+      gameboard.clearBoard()
+      gameboard.createBoard()
+      return
+    }
+  }
 
+return {
+}
+})
+
+//checks for tie
+const checkTie = () => {
+  for (i = 0; i < 3; i++) {
+    for (j = 0; j < 3; j++) {
+      if ( 'undefined' == typeof rows[i][j] || null === rows[i][j] ) {
+        return false
+      }
+    }
+    
+  }
+  return true
+}
+
+//init two players
 let playerOne = player(1)
 let playerTwo = player(1)
