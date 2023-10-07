@@ -95,11 +95,11 @@ const gameboard = (() => {
 })()
 
 //keeps track of players move numbers
-const player = (moveNumber) => {
+const player = (moveNumber, name) => {
   const move = () => moveNumber
 
 return {
-  move
+  move, name
   }
 }
 
@@ -234,5 +234,9 @@ const checkTie = () => {
 }
 
 //init two players
-let playerOne = player(1)
-let playerTwo = player(1)
+const playerOneName = document.getElementById('p1Name').value
+const playerTwoName = document.getElementById('p2Name').value
+let playerOne = player(1, playerOneName)
+let playerTwo = player(1, playerTwoName)
+
+console.log(playerOneName)
