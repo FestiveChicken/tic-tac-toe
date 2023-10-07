@@ -8,15 +8,13 @@
 </head>
 <body>
     <h1>Tic-Tac-Toe!</h1>
-    <label for="fname">Player 1 Name: </label>
+    <label for="p1Name">Player 1 Name: </label>
     <input type="text" id="p1Name" name="p1Name" value="Guest"><br><br>
-    <label for="fname">Player 2 Name: </label>
+    <label for="p2Name">Player 2 Name: </label>
     <input type="text" id="p2Name" name="p2Name" value="Other Guest"><br><br>
     <div id="gameboardHolder"></div>
-    <div id="buttons">
-        <button>Start Game</button>
-        <button>Restart Game</button>
-    </div>
+    <button id="startButton">Start Game</button>
+    <h2 id="winner"></h2>
     <script src="script.js">
     </script>
 </body>

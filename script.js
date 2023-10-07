@@ -84,7 +84,7 @@ const gameboard = (() => {
   }
 
   //creates initial board
-  createBoard()
+  //createBoard()
 
   return {
     createBoard,
@@ -130,16 +130,14 @@ const gameFlow = (() => {
         gameboard.updateBoard()
         gameboardArray[squareID] = 'x'
         gameboard.createBoard()
-        playerOne = player(playerOne.move() + 1)
+        playerOne = player(playerOne.move() + 1, )
         const {rows, columns, diagonals} = updateArrays()
-        checkTie()
-        if (checkTie() == false) {
-          checkWin()
+        checkWin()
+        if (checkWin() == false) {
+          checkTie()
         }
-        else if (checkTie() == true) {
-          console.log('tie')
-          gameboard.clearBoard()
-          gameboard.createBoard()
+        else if (checkWin() == true) {
+          return
         }
         return
       }
@@ -149,14 +147,12 @@ const gameFlow = (() => {
         gameboard.createBoard()
         playerTwo = player(playerTwo.move() + 1)
         const {rows, columns, diagonals} = updateArrays()
-        checkTie()
-        if (checkTie() == false) {
-          checkWin()
+        checkWin()
+        if (checkWin() == false) {
+          checkTie()
         }
-        else if (checkTie() == true) {
-          console.log('tie')
-          gameboard.clearBoard()
-          gameboard.createBoard()
+        else if (checkWin() == true) {
+          return
         }
         return
       }
@@ -195,36 +191,40 @@ const updateArrays = (() => {
   }
 })
 
-//checks for wins or tie
+//checks for wins
 const checkWin = (() => {
+  const announceWinnerText = document.getElementById('winner')
+  const playerOneName = document.getElementById('p1Name').value
+  const playerTwoName = document.getElementById('p2Name').value
+  
+  
   //checks if player one won
   for (i = 0; i < 3; i++) {
     if (rows[i] == 'x,x,x' || columns[i] == 'x,x,x' || diagonals[i] == 'x,x,x') {
-      console.log('p1 is winner')
-      gameboard.clearBoard()
-      gameboard.createBoard()
-      return
+      playerOne = player(1, playerOneName)
+      playerTwo = player(1, playerTwoName)
+      announceWinnerText.innerHTML = playerOne.name + " is the winner"
+      return true
     }
   }
   //checks if player two won
   for (i = 0; i < 3; i++) {
     if (rows[i] == 'o,o,o' || columns[i] == 'o,o,o' || diagonals[i] == 'o,o,o') {
-      console.log('p2 is winner')
-      gameboard.clearBoard()
-      gameboard.createBoard()
-      return
+      playerOne = player(1, playerOneName)
+      playerTwo = player(1, playerTwoName)
+      announceWinnerText.innerHTML = playerTwo.name + " is the winner"
+      return true
     }
   }
 
-return {
-}
+return false
 })
 
 //checks for tie
 const checkTie = () => {
   for (i = 0; i < 3; i++) {
     for (j = 0; j < 3; j++) {
-      if ( 'undefined' == typeof rows[i][j] || null === rows[i][j] ) {
+      if ('undefined' == typeof rows[i][j] || null === rows[i][j]) {
         return false
       }
     }
@@ -233,10 +233,16 @@ const checkTie = () => {
   return true
 }
 
-//init two players
-const playerOneName = document.getElementById('p1Name').value
-const playerTwoName = document.getElementById('p2Name').value
-let playerOne = player(1, playerOneName)
-let playerTwo = player(1, playerTwoName)
+const startGame = () => {
+  const startButton = document.getElementById('startButton')
+  startButton.addEventListener('click', () => {
+    document.getElementById('winner').innerHTML = ''
+    playerOne = player(1)
+    playerTwo = player(1)
+    gameboard.clearBoard()
+    gameboard.createBoard()
+    startButton.innerHTML = 'Restart Game'
+  })
+}
 
-console.log(playerOneName)
+startGame()
