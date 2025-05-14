@@ -5,8 +5,6 @@ A browser-based Tic Tac Toe game implemented with modular JavaScript and a “no
 ## 🔗 Live Demo  
 [Try it out here](https://festivechicken.github.io/tic-tac-toe/)  
 
-*(Update or remove if not deployed yet.)*
-
 ## 🛠️ Features
 - **Gameboard Module**  
   - Stores board state as an array  
